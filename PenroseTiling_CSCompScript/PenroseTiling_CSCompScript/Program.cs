@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Rhino;
 using Rhino.Geometry;
-
+using Grasshopper;
+using GH_IO;
 
 namespace PenroseTiling_CSCompScript
 {
@@ -13,9 +14,12 @@ namespace PenroseTiling_CSCompScript
     {
         static void Main(string[] args)
         {
-            var pt = new Point3d(Point3d.Unset);
-            Console.WriteLine(pt.X);
+            var pt0 = new Point3d(Point3d.Origin);
+            var pt1 = new Point3d(10, 10, 30);
 
+            var line = new Line(pt0, pt1);
+
+            Console.WriteLine(line.GetType().ToString());
         }
     }
 }

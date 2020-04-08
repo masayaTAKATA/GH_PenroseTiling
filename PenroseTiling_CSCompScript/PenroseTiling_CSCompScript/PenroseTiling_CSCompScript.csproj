@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}</ProjectGuid>
+    <ProjectGuid>{9E37D64C-BAFD-4CDF-9F8E-5CA25B0E907C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>PenroseTiling_CSCompScript</RootNamespace>
     <AssemblyName>PenroseTiling_CSCompScript</AssemblyName>
@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PenroseTiling_CSscriptComp.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

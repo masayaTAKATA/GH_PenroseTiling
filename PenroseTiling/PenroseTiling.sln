@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PenroseTiling", "PenroseTiling\PenroseTiling.csproj", "{4F8BE203-A1CF-4C65-B687-4F6481F30F8C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PenroseTiling_CSCompScript", "PenroseTiling_CSCompScript\PenroseTiling_CSCompScript.csproj", "{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{4F8BE203-A1CF-4C65-B687-4F6481F30F8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F8BE203-A1CF-4C65-B687-4F6481F30F8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F8BE203-A1CF-4C65-B687-4F6481F30F8C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74D3004C-B39B-4C11-8C6D-9A240FAA57B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

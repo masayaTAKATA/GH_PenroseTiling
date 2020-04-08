@@ -21,8 +21,8 @@ namespace PenroseTiling
         /// new tabs/panels will automatically be created.
         /// </summary>
         public PenroseTilingComponent()
-          : base("PenroseTiling", "ASpi",
-              "Construct an Archimedean, or arithmetic, spiral given its radii and number of turns.",
+          : base("PenroseTiling", "Penrose",
+              "Construct Penrose diagram lines",
               "Curve", "Primitive")
         {
         }
