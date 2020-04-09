@@ -26,7 +26,7 @@ namespace PenroseTiling
             get
             {
                 //Return a short string describing the purpose of this GHA library.
-                return "";
+                return "Modified a generate Penrose lines CS compenent Script";
             }
         }
         public override Guid Id

@@ -18,12 +18,12 @@ namespace PenroseTiling
         /// constructor without any arguments.
         /// Category represents the Tab in which the component will appear, 
         /// Subcategory the panel. If you use non-existing tab or panel names, 
-        /// new tabs/panels will automatically be created.
+        ///// new tabs/panels will automatically be created.
         /// </summary>
         public PenroseTilingComponent()
           : base("PenroseTiling", "Penrose",
               "Construct Penrose diagram lines",
-              "Curve", "Primitive")
+              "User", "Test")
         {
         }
 
