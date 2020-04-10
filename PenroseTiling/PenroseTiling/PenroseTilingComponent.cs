@@ -4,131 +4,191 @@ using System.Collections.Generic;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-// In order to load the result of this wizard, you will also need to
-// add the output bin/ folder of this project to the list of loaded
-// folder in Grasshopper.
-// You can use the _GrasshopperDeveloperSettings Rhino command for that.
+
 
 namespace PenroseTiling
 {
     public class PenroseTilingComponent : GH_Component
     {
-        /// <summary>
-        /// Each implementation of GH_Component must provide a public 
-        /// constructor without any arguments.
-        /// Category represents the Tab in which the component will appear, 
-        /// Subcategory the panel. If you use non-existing tab or panel names, 
-        ///// new tabs/panels will automatically be created.
-        /// </summary>
-        public PenroseTilingComponent()
-          : base("PenroseTiling", "Penrose",
-              "Construct Penrose diagram lines",
-              "User", "Test")
+        
+        public PenroseTilingComponent() : base("PenroseTiling", "Penrose", "Construct Penrose diagram lines", "User", "Test")
         {
         }
-
-        /// <summary>
-        /// Registers all the input parameters for this component.
-        /// </summary>
+        
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            // Use the pManager object to register your input parameters.
-            // You can often supply default values when creating parameters.
-            // All parameters must have the correct access type. If you want 
-            // to import lists or trees of values, modify the ParamAccess flag.
-            pManager.AddPlaneParameter("Plane", "P", "Base plane for spiral", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("Inner Radius", "R0", "Inner radius for spiral", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Outer Radius", "R1", "Outer radius for spiral", GH_ParamAccess.item, 10.0);
-            pManager.AddIntegerParameter("Turns", "T", "Number of turns between radii", GH_ParamAccess.item, 10);
-
-            // If you want to change properties of certain parameters, 
-            // you can use the pManager instance to access them by index:
-            //pManager[0].Optional = true;
+            pManager.AddIntegerParameter("Number", "num", "Number of level", GH_ParamAccess.item, 2);
+            pManager.AddNumberParameter("Length", "length", "Line length", GH_ParamAccess.item);
         }
 
-        /// <summary>
-        /// Registers all the output parameters for this component.
-        /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            // Use the pManager object to register your output parameters.
-            // Output parameters do not have default values, but they too must have the correct access type.
-            pManager.AddCurveParameter("Spiral", "S", "Spiral curve", GH_ParamAccess.item);
-
-            // Sometimes you want to hide a specific parameter from the Rhino preview.
-            // You can use the HideParameter() method as a quick way:
-            //pManager.HideParameter(0);
+            pManager.AddLineParameter("Lines", "lines", "Penrose diagram lines", GH_ParamAccess.list);
         }
 
-        /// <summary>
-        /// This is the method that actually does the work.
-        /// </summary>
-        /// <param name="DA">The DA object can be used to retrieve data from input parameters and 
-        /// to store data in output parameters.</param>
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // First, we need to retrieve all data from the input parameters.
-            // We'll start by declaring variables and assigning them starting values.
-            Plane plane = Plane.WorldXY;
-            double radius0 = 0.0;
-            double radius1 = 0.0;
-            int turns = 0;
+            //Declare start and rule string (ex)
+            string finalString = "[7]++[7]++[7]++[7]++[7]";
+            string rule6 = "81++91----71[-81----61]++";
+            string rule7 = "+81--91[---61--71]+";
+            string rule8 = "-61++71[+++81++91]-";
+            string rule9 = "--81++++61[+91++++71]--71";
 
-            // Then we need to access the input parameters individually. 
-            // When data cannot be extracted from a parameter, we should abort this method.
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref radius0)) return;
-            if (!DA.GetData(2, ref radius1)) return;
-            if (!DA.GetData(3, ref turns)) return;
+            int num = 0;
+            double length = double.NaN;
 
+            if (!DA.GetData(0, ref num)) return;
+            if (!DA.GetData(1, ref length)) return;
+            
             // We should now validate the data and warn the user if invalid data is supplied.
-            if (radius0 < 0.0)
+            if (num <= 1)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Inner radius must be bigger than or equal to zero");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Number of level must be bigger than One");
                 return;
             }
-            if (radius1 <= radius0)
+            if (length < 0)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Outer radius must be bigger than the inner radius");
-                return;
-            }
-            if (turns <= 0)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Spiral turn count must be bigger than or equal to one");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Length  must be bigger than Zero");
                 return;
             }
 
-            // We're set to create the spiral now. To keep the size of the SolveInstance() method small, 
-            // The actual functionality will be in a different method:
-            Curve spiral = CreateSpiral(plane, radius0, radius1, turns);
+            //Generate the string
+            GrowString(ref num, ref finalString, rule6, rule7, rule8, rule9);
+            //Generate the lines
+            var penroseLines = new List<Line>();
+            ParsepenroseString(finalString, length, ref penroseLines);
 
-            // Finally assign the spiral to the output parameter.
-            DA.SetData(0, spiral);
+            DA.SetData(0, penroseLines);
         }
 
-        private Curve CreateSpiral(Plane plane, double r0, double r1, Int32 turns)
+        //Generate GrowString from rules
+        private void GrowString(ref int num, ref string finalString, string rule6, string rule7, string rule8, string rule9)
         {
-            Line l0 = new Line(plane.Origin + r0 * plane.XAxis, plane.Origin + r1 * plane.XAxis);
-            Line l1 = new Line(plane.Origin - r0 * plane.XAxis, plane.Origin - r1 * plane.XAxis);
+            //Decrement the count with each new execution of the grow function
+            num = num - 1;
+            char rule;
 
-            Point3d[] p0;
-            Point3d[] p1;
-
-            l0.ToNurbsCurve().DivideByCount(turns, true, out p0);
-            l1.ToNurbsCurve().DivideByCount(turns, true, out p1);
-
-            PolyCurve spiral = new PolyCurve();
-
-            for (int i = 0; i < p0.Length - 1; i++)
+            //Create new string
+            string newString = "";
+            for (int i = 0; i < finalString.Length; i++)
             {
-                Arc arc0 = new Arc(p0[i], plane.YAxis, p1[i + 1]);
-                Arc arc1 = new Arc(p1[i + 1], -plane.YAxis, p0[i + 1]);
+                rule = finalString[i];
+                if (rule == '6')
+                {
+                    newString = newString + rule6;
+                }
+                if (rule == '7')
+                {
+                    newString = newString + rule7;
+                }
+                if (rule == '8')
+                {
+                    newString = newString + rule8;
+                }
+                if (rule == '9')
+                {
+                    newString = newString + rule9;
+                }
 
-                spiral.Append(arc0);
-                spiral.Append(arc1);
+                if (rule == '[' || rule == ']' || rule == '+' || rule == '-')
+                {
+                    newString = newString + rule;
+                }
+            }
+            finalString = newString;
+
+            //Stop condition
+            if (num == 0) { return; }
+
+            //Grow agein(recursive)
+            GrowString(ref num, ref finalString, rule6, rule7, rule8, rule9);
+        }
+
+        //Penrose diagram lines is generate from the penroseString
+        private void ParsepenroseString(string penroseString, double length, ref List<Line> penroseLines)
+        {
+            //Parse instruction string to generate points
+            //Let base point be world origin
+            var pt = Point3d.Origin;
+
+            //Declare points list
+            //Vector rotate with (+.-) instruction by 36degrees
+            var listPts = new List<Point3d>();
+
+            //Draw forward direction
+            //Vector direction will be rotated depend on (+, -) instructions
+            var vec = new Vector3d(1.0, 0.0, 0.0);
+
+            //Stacks of points and vectors
+            var ptStack = new List<Point3d>();
+            var vStack = new List<Vector3d>();
+
+            //Declare loop variables
+            char rule;
+            for (int i = 0; i < penroseString.Length; i++)
+            {
+                //Always start for 1 and length  1 to get one char at a time
+                rule = penroseString[i];
+
+                //rotate left
+                if (rule == '+')
+                {
+                    vec.Rotate(36 * (Math.PI / 180), Vector3d.ZAxis);
+                }
+                //rotate right
+                if (rule == '-')
+                {
+                    vec.Rotate(-36 * (Math.PI / 180), Vector3d.ZAxis);
+                }
+                //draw forward by direction
+                if (rule == '1')
+                {
+                    //Add current points
+                    var newPt1 = new Point3d(pt);
+                    listPts.Add(newPt1);
+
+                    //Calculate next point
+                    var newPt2 = pt + (vec * length);
+                    //Add next point
+                    listPts.Add(newPt2);
+
+                    //Save new location
+                    pt = newPt2;
+                }
+
+                //Save point location
+                if (rule == '[')
+                {
+                    //Save current point and direction
+                    var newPt = new Point3d(pt);
+                    ptStack.Add(newPt);
+
+                    var newVec = new Vector3d(vec);
+                    vStack.Add(newVec);
+                }
+                //Retrieve point and directon
+                if (rule == ']')
+                {
+                    pt = ptStack[ptStack.Count - 1];
+                    vec = vStack[vStack.Count - 1];
+                    //Remove from stack
+                    ptStack.RemoveAt(ptStack.Count - 1);
+                    vStack.RemoveAt(vStack.Count - 1);
+                }
             }
 
-            return spiral;
+            //Generate lines
+            var allLines = new List<Line>();
+            for (int i = 1; i < listPts.Count; i = i + 2)
+            {
+                var line = new Line(listPts[i - 1], listPts[i]);
+                allLines.Add(line);
+            }
+
+            penroseLines = allLines;
+
         }
 
         /// <summary>
