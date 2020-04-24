@@ -11,7 +11,7 @@ namespace PenroseTiling
     public class PenroseTilingComponent : GH_Component
     {
         
-        public PenroseTilingComponent() : base("PenroseTiling", "Penrose", "Construct Penrose diagram lines", "User", "Test")
+        public PenroseTilingComponent() : base("PenroseTiling", "PRT", "Construct Penrose diagram lines", "User", "Test")
         {
         }
         
@@ -53,6 +53,11 @@ namespace PenroseTiling
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Length  must be bigger than Zero");
                 return;
             }
+            if(num > 5)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Number of level is recomended under Five");
+                return;
+            }
 
             //Generate the string
             GrowString(ref num, ref finalString, rule6, rule7, rule8, rule9);
@@ -60,7 +65,8 @@ namespace PenroseTiling
             var penroseLines = new List<Line>();
             ParsepenroseString(finalString, length, ref penroseLines);
 
-            DA.SetData(0, penroseLines);
+            DA.SetDataList(0, penroseLines);
+            
         }
 
         //Generate GrowString from rules
@@ -191,39 +197,11 @@ namespace PenroseTiling
 
         }
 
-        /// <summary>
-        /// The Exposure property controls where in the panel a component icon 
-        /// will appear. There are seven possible locations (primary to septenary), 
-        /// each of which can be combined with the GH_Exposure.obscure flag, which 
-        /// ensures the component will only be visible on panel dropdowns.
-        /// </summary>
-        public override GH_Exposure Exposure
-        {
-            get { return GH_Exposure.primary; }
-        }
+        protected override System.Drawing.Bitmap Icon => null;
 
-        /// <summary>
-        /// Provides an Icon for every component that will be visible in the User Interface.
-        /// Icons need to be 24x24 pixels.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                // You can add image files to your project resources and access them like this:
-                //return Resources.IconForThisComponent;
-                return null;
-            }
-        }
+        public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
-        /// <summary>
-        /// Each component must have a unique Guid to identify it. 
-        /// It is vital this Guid doesn't change otherwise old ghx files 
-        /// that use the old ID will partially fail during loading.
-        /// </summary>
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("3becb5e0-906f-4b11-a5f1-6fa658f1992a"); }
-        }
+        public override Guid ComponentGuid => new Guid("{BA4B0055-9546-4F55-BF21-5A06CD9EBCC1}");
+        
     }
 }
