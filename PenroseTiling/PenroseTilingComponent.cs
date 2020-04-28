@@ -14,7 +14,8 @@ namespace PenroseTiling
         public PenroseTilingComponent() : base("PenroseTiling", "PRT", "Construct Penrose diagram lines", "User", "Test")
         {
         }
-        
+
+        #region Input, Output
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddIntegerParameter("Number", "num", "Number of level", GH_ParamAccess.item, 2);
@@ -25,11 +26,16 @@ namespace PenroseTiling
         {
             pManager.AddLineParameter("Lines", "lines", "Penrose diagram lines", GH_ParamAccess.list);
         }
+        #endregion
 
-
+        /// <summary> Rule strings
+        /// +: rotate 36 degrees
+        /// -: rotate -36 degrees
+        /// 1: foward
+        /// </summary>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //Declare start and rule string (ex)
+            //Declare start and rule string (example)
             string finalString = "[7]++[7]++[7]++[7]++[7]";
             string rule6 = "81++91----71[-81----61]++";
             string rule7 = "+81--91[---61--71]+";
@@ -63,7 +69,7 @@ namespace PenroseTiling
             GrowString(ref num, ref finalString, rule6, rule7, rule8, rule9);
             //Generate the lines
             var penroseLines = new List<Line>();
-            ParsepenroseString(finalString, length, ref penroseLines);
+            ParsePenroseString(finalString, length, ref penroseLines);
 
             DA.SetDataList(0, penroseLines);
             
@@ -113,7 +119,7 @@ namespace PenroseTiling
         }
 
         //Penrose diagram lines is generate from the penroseString
-        private void ParsepenroseString(string penroseString, double length, ref List<Line> penroseLines)
+        private void ParsePenroseString(string penroseString, double length, ref List<Line> penroseLines)
         {
             //Parse instruction string to generate points
             //Let base point be world origin
@@ -197,11 +203,11 @@ namespace PenroseTiling
 
         }
 
+        
         protected override System.Drawing.Bitmap Icon => null;
 
         public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
         public override Guid ComponentGuid => new Guid("{BA4B0055-9546-4F55-BF21-5A06CD9EBCC1}");
-        
     }
 }

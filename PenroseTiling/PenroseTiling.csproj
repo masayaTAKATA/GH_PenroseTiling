@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="PenroseTilingComponent.cs" />
     <Compile Include="PenroseTilingInfo.cs" />
+    <Compile Include="PenroseTilingTaskComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
