@@ -232,7 +232,11 @@ namespace PenroseTiling
             }
         }
 
-        protected override System.Drawing.Bitmap Icon => null;
+        /// <summary>
+        /// Component icon image form
+        /// https://www.flaticon.com/free-icon/penrose-square_297963?term=penrose&page=1&position=4
+        /// </summary>
+        protected override System.Drawing.Bitmap Icon => PenroseTiling.Properties.Resources.penrose_square;
 
         public override GH_Exposure Exposure => GH_Exposure.primary | GH_Exposure.obscure;
 
