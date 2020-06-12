@@ -14,7 +14,7 @@ namespace PenroseTiling
     public class PenroseTilingTaskComponent : GH_TaskCapableComponent<PenroseTilingTaskComponent.SolveResults>
     {
         //Constructor
-        public PenroseTilingTaskComponent() : base("PenroseTiling_Task", "PRT_t", "multi-threading compute Penrose diagram lines", "User", "Test")
+        public PenroseTilingTaskComponent() : base("PenroseTiling_Task", "PRT_t", "multi-threading compute Penrose diagram lines", "Meenaxy", "Test")
         {
         }
         #region Input, Output

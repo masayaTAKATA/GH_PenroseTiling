@@ -11,7 +11,7 @@ namespace PenroseTiling
     public class PenroseTilingComponent : GH_Component
     {
         
-        public PenroseTilingComponent() : base("PenroseTiling", "PRT", "Construct Penrose diagram lines", "User", "Default")
+        public PenroseTilingComponent() : base("PenroseTiling", "PRT", "Construct Penrose diagram lines", "Meenaxy", "Default")
         {
         }
 
